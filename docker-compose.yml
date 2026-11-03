@@ -8,8 +8,6 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=YourStrong!Passw0rd  # Пароль для 'sa'
-    ports:
-      - "1433:1433" # Пробрасываем порт, чтобы можно было зайти из SSMS
     volumes:
       - sqlserver_data:/var/opt/mssql # Чтобы данные не пропадали при перезапуске
 
