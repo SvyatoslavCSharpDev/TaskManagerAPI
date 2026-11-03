@@ -16,9 +16,14 @@ builder.Services.AddScoped<ITaskService>(sp => sp.GetRequiredService<TaskService
 builder.Services.AddSingleton<FileLogger>(sp => new FileLogger("log.txt"));
 
 var app = builder.Build();
+//Изначально база данных будет пустая, этот код позволит после запуска API начать создавать базу данных через миграции если они есть
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    // Применяем миграции, если они есть
+    dbContext.Database.Migrate();
+}
 
-
-   
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # 1. Контейнер с базой данных
+  database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: taskmanager-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd  # Пароль для 'sa'
+    ports:
+      - "1433:1433" # Пробрасываем порт, чтобы можно было зайти из SSMS
+    volumes:
+      - sqlserver_data:/var/opt/mssql # Чтобы данные не пропадали при перезапуске
+
+  # 2. Контейнер с твоим API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taskmanager-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database # API запустится только после базы (но не ждет полной готовности БД)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # Переопределяем строку подключения прямо здесь
+      - ConnectionStrings__DefaultConnection=Server=database;Database=TaskManagerDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+
+volumes:
+  sqlserver_data:
