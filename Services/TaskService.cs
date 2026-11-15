@@ -46,11 +46,8 @@ namespace TaskManagerAPI.Services
             }
             catch (IndexOutOfRangeException ex)
             {
-                if (task == null)
-                {
-                    Console.WriteLine(ex.Message);
-                  
-                }
+               
+               Console.WriteLine(ex.Message); 
             }
             return task;
         }
@@ -113,20 +110,16 @@ namespace TaskManagerAPI.Services
 
        public TaskItem? GetTitle(string titleTask)
         {
-            TaskItem? taskTitle = null;
-            foreach (var taskItem in _context.TasksItems)
-            {
-                if (taskItem.Title == null)
-                {
-                    return taskTitle;
-                }
-                if (taskItem.Title.Contains(titleTask, StringComparison.OrdinalIgnoreCase))
-                {
-                    taskTitle = taskItem;
 
-                }
+           
+            var getTitleTask = _context.TasksItems.FirstOrDefault(x => x.Title != null && x.Title.ToLower().Contains(titleTask.ToLower()));
+
+            if (getTitleTask == null)
+            {
+                return null;
             }
-            return taskTitle;
+           
+            return getTitleTask;
         }
 
         public List<TaskItem> GetIsCompleted(bool completedTask)
